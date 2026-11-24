@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { pixelsToAscii, outputSize, searchLibrary, cleanPrompt, artDimensions, cycleIndex, escapeXML } from '../dist/core.js';
+import { pixelsToAscii, outputSize, searchLibrary, filterArchive, artworkCredit, cleanPrompt, artDimensions, cycleIndex, escapeXML } from '../dist/core.js';
 
 test('luminance runs from whitespace to dense ink and preserves the grid', () => {
   const pixels = new Uint8ClampedArray([255,255,255,255,128,128,128,255,0,0,0,255,255,255,255,255]);
@@ -23,17 +23,16 @@ test('portrait and landscape output compensate for monospace character proportio
 test('keyword search returns every matching original artwork, including aliases', async () => {
   const library = JSON.parse(await readFile(new URL('../dist/assets/library.json',import.meta.url)));
   const skulls = searchLibrary(library,'Please draw a skull');
-  assert.equal(skulls.length, 7);
-  assert.equal(skulls[0].id, 'ascii-bin-128');
-  assert.equal(new Set(skulls.map(item => item.text)).size, 7);
+  assert.ok(skulls.length >= 20);
+  assert.equal(new Set(skulls.map(item => item.text)).size, skulls.length);
   assert.deepEqual(searchLibrary(library,'skulls'), skulls);
-  assert.equal(searchLibrary(library,'Please draw a cute cat').length, 2);
-  assert.equal(searchLibrary(library,'horned skull').length, 2);
-  assert.equal(searchLibrary(library,'rose').length, 5);
+  assert.ok(searchLibrary(library,'Please draw a cute cat').length >= 100);
+  assert.ok(searchLibrary(library,'horned skull').length >= 2);
+  assert.ok(searchLibrary(library,'rose').length >= 15);
   assert.equal(searchLibrary(library,'glorpzxywwq',1).length,0);
   assert.equal(cleanPrompt('Please make ASCII art of a rose'),'rose');
   assert.equal(searchLibrary(library,'').length, library.length);
-  assert.equal(searchLibrary([...library,...library,...library,...library,...library],'skull').length,35);
+  assert.equal(searchLibrary([...library,...library],'skull').length,skulls.length*2);
   assert.equal(searchLibrary([{name:'Skullcap',tags:'hat'}],'skull').length,0);
 });
 
@@ -42,10 +41,35 @@ test('archive records contain literal ASCII text, source links, and retained sig
   assert.equal(new Set(library.map(item=>item.id)).size, library.length);
   for (const item of library) {
     assert.match(item.text, /\n/);
-    assert.doesNotMatch(item.text, /[^\x20-\x7e\n]/);
-    assert.match(item.sourceURL, /^https:\/\/github\.com\/amwhoi\/ascii-bin\/blob\/main\/asciiart_db\.txt#L\d+$/);
+    assert.doesNotMatch(item.text, /[\x00-\x08\x0b-\x1f\x7f\ufffd]/);
+    assert.match(item.sourceURL, /^https:\/\//);
+    assert.ok(item.origins.length);
+    assert.ok(item.licenseURL);
+    if (item.sourceId === 'jgs') assert.match(item.text,/\bjgs\b/i);
+    if (item.sourceId === 'ldb') assert.match(item.text,/\bldb\b/i);
   }
   assert.match(library.find(item=>item.id==='ascii-bin-251').text,/Berton Corson/);
+});
+
+test('multiple archives contribute cat matches and filters preserve source attribution', async () => {
+  const library = JSON.parse(await readFile(new URL('../dist/assets/library.json',import.meta.url)));
+  const metadata = JSON.parse(await readFile(new URL('../dist/assets/archives.json',import.meta.url)));
+  assert.ok(library.length > 3000);
+  assert.equal(new Set(library.map(item=>item.text)).size,library.length);
+  const cats=searchLibrary(library,'cat');
+  assert.ok(new Set(cats.flatMap(item=>item.origins.map(origin=>origin.sourceId))).size>=5);
+  for (const source of metadata.sources) {
+    const subset=filterArchive(library,source.id);
+    assert.equal(subset.length,source.count);
+    for (const item of subset) {
+      assert.ok(item.origins.some(origin=>origin.sourceId===source.id));
+      const credit=artworkCredit(item);
+      assert.ok(credit.includes(source.name));
+      assert.ok(credit.includes(source.licenseURL));
+    }
+  }
+  assert.equal(filterArchive(library,'missing').length,0);
+  assert.ok(filterArchive(library,'jgs','nature').every(item=>item.group==='nature'));
 });
 
 test('cycling visits every match and wraps in either direction without changing artwork', async () => {

@@ -40,8 +40,9 @@ export function searchLibrary(library, query, limit = Infinity) {
   const words = normalized.split(/\s+/);
   return library.map(item => {
     const name = item.name.toLowerCase();
-    const tags = item.tags.toLowerCase().split(/\s*,\s*/);
-    const nameWords = name.split(/[\s-]+/);
+    const canonical = word => ALIASES[word] || word;
+    const tags = (item.tags + ', ' + (item.author || '')).toLowerCase().split(/[^\p{L}\p{N}]+/u).map(canonical);
+    const nameWords = name.split(/[^\p{L}\p{N}]+/u).map(canonical);
     let score = name === normalized ? 200 : 0;
     if (nameWords[0] === normalized) score += 30;
     if (tags.includes(normalized)) score += 42;
@@ -54,6 +55,15 @@ export function searchLibrary(library, query, limit = Infinity) {
     if (score) score -= Math.min(name.length / 12, 8);
     return { item, score };
   }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, limit).map(x => x.item);
+}
+
+export function filterArchive(library, sourceId = 'all', category = 'all') {
+  return library.filter(item => (category === 'all' || item.group === category) &&
+    (sourceId === 'all' || item.origins.some(origin => origin.sourceId === sourceId)));
+}
+
+export function artworkCredit(item) {
+  return item.origins.map(origin => [origin.author, origin.source, origin.license, origin.licenseURL, origin.sourceURL].filter(Boolean).join(' · ')).join('\n');
 }
 
 export function artDimensions(text) {

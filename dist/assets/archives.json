@@ -1,0 +1,70 @@
+{
+  "total": 3493,
+  "deduplicated": 317,
+  "excluded": {
+    "ascii-cats": 3,
+    "jgs": 5,
+    "ldb": 1,
+    "candy-box": 19,
+    "roy-sac": 2
+  },
+  "sources": [
+    {
+      "id": "ascii-bin",
+      "name": "ASCII Bin",
+      "url": "https://github.com/amwhoi/ascii-bin",
+      "author": "",
+      "license": "Collection CC0; individual artist rights apply",
+      "licenseURL": "https://github.com/amwhoi/ascii-bin#license",
+      "count": 97
+    },
+    {
+      "id": "jgs",
+      "name": "Joan Stark · GeoCities",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/index.htm",
+      "author": "Joan G. Stark (jgs)",
+      "license": "Personal use · keep artist signature",
+      "licenseURL": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/please.htm",
+      "originalURL": "http://www.geocities.com/SoHo/7373/",
+      "archiveURL": "https://web.archive.org/web/20100202112131/http://www.geocities.com/SoHo/7373/index.htm",
+      "count": 2307
+    },
+    {
+      "id": "ldb",
+      "name": "Laura Brown · ldb",
+      "url": "https://asciiartist.com/",
+      "author": "Laura Brown (ldb)",
+      "license": "CC BY-NC-SA 4.0",
+      "licenseURL": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "count": 337
+    },
+    {
+      "id": "ascii-cats",
+      "name": "ASCII Cats",
+      "url": "https://github.com/stealth-factory/ascii-cats",
+      "author": "William Li collection · original signatures retained",
+      "license": "MIT · original signatures retained",
+      "licenseURL": "https://github.com/stealth-factory/ascii-cats#license",
+      "count": 37
+    },
+    {
+      "id": "candy-box",
+      "name": "Candy Box 2",
+      "url": "https://candybox2.github.io/ascii_art.html",
+      "author": "Candy Box 2 contributors",
+      "license": "CC BY-SA 3.0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "count": 272
+    },
+    {
+      "id": "roy-sac",
+      "name": "Roy/SAC",
+      "url": "https://www.roysac.com/roy_asciishow.html",
+      "author": "Carsten Cumbrowski (Roy/SAC)",
+      "license": "Public domain · released by the artist",
+      "licenseURL": "https://www.roysac.com/roy_asciishow.html",
+      "count": 443
+    }
+  ],
+  "retrieved": "2026-11-24"
+}

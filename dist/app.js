@@ -1,4 +1,4 @@
-import { RAMPS, pixelsToAscii, searchLibrary, artDimensions, cycleIndex, outputSize, escapeXML, safeFilename } from './core.js';
+import { RAMPS, pixelsToAscii, searchLibrary, filterArchive, artworkCredit, artDimensions, cycleIndex, outputSize, escapeXML, safeFilename } from './core.js';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -10,6 +10,9 @@ const STARTERS = [
 ];
 const state = { library: [], source: null, nativeArt: null, matches: [], matchIndex: 0, query: '', matchCategory: 'all', text: '', name: '', credit: '', sourceURL: '', request: 0, busy: false, zoom: 1, category: 'all', limit: 40, dimensions: { width: 100, height: 58 } };
 let toastTimer;
+state.archives = [];
+state.archiveFilter = 'all';
+state.matchArchive = 'all';
 
 function notify(message) {
   clearTimeout(toastTimer);
@@ -131,19 +134,24 @@ function renderNavigator() {
   $('#previous-art').disabled = $('#next-art').disabled = state.matches.length < 2;
 }
 
-function selectArt(item, { matches = state.library, query = '', category = 'all', scroll = false } = {}) {
+function selectArt(item, { matches = state.library, query = '', category = 'all', archive = 'all', scroll = false } = {}) {
   ++state.request;
   state.matches = matches;
   state.matchIndex = matches.findIndex(match => match.id === item.id);
   state.query = query;
   state.matchCategory = category;
+  state.matchArchive = archive;
   state.source = null;
   state.nativeArt = item;
   state.name = item.name;
-  state.credit = `${item.name} · Collected by ASCII Bin. Original signatures retained; see source for credits and reuse information.`;
+  state.credit = artworkCredit(item);
   state.sourceURL = item.sourceURL;
   state.zoom = 1;
-  renderCredit('ASCII BIN · SOURCE & CREDITS ↗', item.sourceURL);
+  const origin = item.origins.find(origin => origin.sourceId === archive) || item.origins[0];
+  renderCredit(`${origin.source} · SOURCE ↗`, origin.sourceURL);
+  $('#art-author').textContent = origin.author || 'Original artist credit retained in the drawing';
+  $('#art-license').textContent = origin.license;
+  $('#art-license').href = origin.licenseURL;
   renderNavigator();
   render();
   setBusy(false);
@@ -154,7 +162,7 @@ function selectArt(item, { matches = state.library, query = '', category = 'all'
 function cycleArt(step) {
   if (!state.matches.length) return;
   const item = state.matches[cycleIndex(state.matchIndex, step, state.matches.length)];
-  selectArt(item, { matches: state.matches, query: state.query, category: state.matchCategory });
+  selectArt(item, { matches: state.matches, query: state.query, category: state.matchCategory, archive: state.matchArchive });
 }
 
 async function generate() {
@@ -305,7 +313,7 @@ async function copyArt() {
 
 function renderLibrary() {
   const search = $('#library-search').value;
-  let items = state.category === 'all' ? state.library : state.library.filter(item => item.group === state.category);
+  let items = filterArchive(state.library, state.archiveFilter, state.category);
   if (search.trim()) items = searchLibrary(items, search, items.length);
   $('#library-results-count').textContent = `${items.length.toLocaleString()} ASCII artworks${search.trim() ? ` matching “${search.trim()}”` : ''}`;
   thumbnailObserver.disconnect();
@@ -315,10 +323,11 @@ function renderLibrary() {
     button.classList.toggle('selected', state.nativeArt?.id === item.id);
     const art = makeThumbnail(item, 'library-art');
     const label = document.createElement('span');label.textContent=item.name;
-    button.append(art,label);button.addEventListener('click',() => {
+    const source = document.createElement('small');source.textContent=item.source;
+    button.append(art,label,source);button.addEventListener('click',() => {
       $('#library-dialog').close();switchTab('imagine');
       $('#prompt').value = search;
-      selectArt(item,{matches:items,query:search,category:state.category,scroll:true});
+      selectArt(item,{matches:items,query:search,category:state.category,archive:state.archiveFilter,scroll:true});
     });
     $('#library-grid').append(button);
   }
@@ -341,8 +350,10 @@ const thumbnailObserver = new ResizeObserver(entries => {
   }
 });
 
-function openLibrary(query = '', category = 'all') {
+function openLibrary(query = '', category = 'all', archive = 'all') {
   state.category=category;state.limit=40;
+  state.archiveFilter=archive;
+  $('#archive-filter').value=archive;
   $('#library-search').value=query;
   $$('[data-category]').forEach(button=>button.classList.toggle('selected',button.dataset.category===category));
   renderLibrary();$('#library-dialog').showModal();$('#library-search').focus();
@@ -374,7 +385,8 @@ $('#upload-tab').addEventListener('click',() => switchTab('upload'));
 $$('[role=tab]').forEach(tab => tab.addEventListener('keydown',event => { if (['ArrowLeft','ArrowRight'].includes(event.key)) {event.preventDefault();const next=tab.id==='imagine-tab'?'upload':'imagine';switchTab(next);$(`#${next}-tab`).focus();} }));
 $('#previous-art').addEventListener('click',()=>cycleArt(-1));
 $('#next-art').addEventListener('click',()=>cycleArt(1));
-$('#view-matches').addEventListener('click',()=>openLibrary(state.query,state.matchCategory));
+$('#view-matches').addEventListener('click',()=>openLibrary(state.query,state.matchCategory,state.matchArchive));
+$('#archive-filter').addEventListener('change',event=>{state.archiveFilter=event.target.value;state.limit=40;renderLibrary();});
 $('#ascii-output').addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight'].includes(event.key)&&state.matches.length){event.preventDefault();cycleArt(event.key==='ArrowLeft'?-1:1);}});
 $('#drop-zone').addEventListener('click',() => $('#file-input').click());
 $('#file-input').addEventListener('change',event => uploadImage(event.target.files[0]));
@@ -408,11 +420,17 @@ new ResizeObserver(fitArt).observe($('#canvas-viewport'));
 async function init() {
   setBusy(true,'Warming up the characters…');
   try {
-    state.library = await fetchJSON('./assets/library.json');
+    const [library, metadata] = await Promise.all([fetchJSON('./assets/library.json'),fetchJSON('./assets/archives.json')]);
+    state.library = library;
+    state.archives = metadata.sources;
+    $('#archive-count').textContent=state.archives.length;
+    for (const source of state.archives) {
+      const option=document.createElement('option');option.value=source.id;option.textContent=`${source.name} (${source.count.toLocaleString()})`;$('#archive-filter').append(option);
+    }
     $('#library-count').textContent=state.library.length.toLocaleString();
-    const matches = searchLibrary(state.library, 'skull');
-    $('#prompt').value = 'skull';
-    selectArt(matches[0], {matches, query:'skull'});
+    const matches = searchLibrary(state.library, 'cat');
+    $('#prompt').value = 'cat';
+    selectArt(matches[0], {matches, query:'cat'});
     renderStarters();
   } catch(error){setStatus('The studio could not load its library. You can still upload your own image.',true);}
   finally {setBusy(false);}

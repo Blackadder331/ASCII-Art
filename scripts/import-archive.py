@@ -30,5 +30,5 @@ for number, name, group, tags in index:
         'text': artwork, 'source': 'ASCII Bin',
         'sourceURL': f'https://github.com/amwhoi/ascii-bin/blob/main/asciiart_db.txt#L{line}',
     })
-(ROOT / 'dist/assets/library.json').write_text(json.dumps(artworks, indent=2) + '\n')
+(ROOT / 'scripts/catalog/ascii-bin.json').write_text(json.dumps(artworks, indent=2) + '\n')
 print(f'Imported {len(artworks)} original text drawings. Source SHA-256: {hashlib.sha256(source.encode()).hexdigest()}')

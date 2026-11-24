@@ -1,0 +1,435 @@
+{
+  "retrieved": "2026-11-24",
+  "files": [
+    {
+      "file": "candy-license.html",
+      "url": "https://candybox2.github.io/ascii_art.html",
+      "sha256": "d5484927acb21782686d2f42654ff76a51320efb2ac4c2b4641438b257fadf0b"
+    },
+    {
+      "file": "candybox.zip",
+      "url": "https://codeload.github.com/candybox2/candybox2.github.io/zip/35301d438aa2c1e58e8cb3ea215b0af323bddf9b",
+      "sha256": "561f79f29ae798d914149b41ef1f11464f29ac16a75b9123409f4e10d48144a9"
+    },
+    {
+      "file": "cats-package.json",
+      "url": "https://raw.githubusercontent.com/stealth-factory/ascii-cats/master/package.json",
+      "sha256": "39c23a107a1e8c18c93ff8a04ac0fbb8dd5a1a7f897f55fafee9c6a274c18142"
+    },
+    {
+      "file": "cats-readme.md",
+      "url": "https://raw.githubusercontent.com/stealth-factory/ascii-cats/master/README.md",
+      "sha256": "161129cb7f1223ef650b96a99c2afdf1f1816f0f6ce1c0412df1838c4f563c9f"
+    },
+    {
+      "file": "cats.json",
+      "url": "https://raw.githubusercontent.com/stealth-factory/ascii-cats/master/cats.json",
+      "sha256": "5a8ca3b64184f4710f9f780abb9ad060878ff401fe6a70f4f25af8a8ef53b709"
+    },
+    {
+      "file": "jgs-guidelines.html",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/please.htm",
+      "sha256": "387b9da680b3003c444beb67fb1ac4b329a4c1c46cf5581e8d1e9bd51215f199"
+    },
+    {
+      "file": "jgs-index.html",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/index.htm",
+      "sha256": "781407abfb5de91f4453de428b7b44609700cf4a0ed1587f63ff26dc2eebdf4e"
+    },
+    {
+      "file": "jgs/aquatic.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/aquatic.htm",
+      "sha256": "e3c6ab0fa4e12c29e56130b11509709cfdcd0f7ca467f00f399d339e416ad5b7"
+    },
+    {
+      "file": "jgs/baby.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/baby.htm",
+      "sha256": "a2d7b0249243cef277c875d6cddaf70a655b365ac780df83ddf0e2f82fc7e80b"
+    },
+    {
+      "file": "jgs/bday.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/bday.htm",
+      "sha256": "7b1d8af4cdc4199b8580c864a5d53ad988f986a26b4fb15ab5f3b9d9ee2efd4a"
+    },
+    {
+      "file": "jgs/birds.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/birds.htm",
+      "sha256": "34c8d6e56a683069ea8144819359669aca4c212ef72d74cade7a793f592ad5c2"
+    },
+    {
+      "file": "jgs/build.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/build.htm",
+      "sha256": "3bb4e2be60c496a3d58216b05c007a1f7c54d19531916a8d19189d4937a5b584"
+    },
+    {
+      "file": "jgs/celestal.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/celestal.htm",
+      "sha256": "b3a5a773cdfef67256ab24d6956a4fd0d6614bb780926b90fb98dc3c856e385a"
+    },
+    {
+      "file": "jgs/cloth.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/cloth.htm",
+      "sha256": "413fe3f39c0db54d62e07b86c7acd3fa361274008c937e8b845d24cbdd486c6f"
+    },
+    {
+      "file": "jgs/computer.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/computer.htm",
+      "sha256": "ae03fcd76679f218d8490eca3c1eafac880e06713045384fc22d122542529c87"
+    },
+    {
+      "file": "jgs/design.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/design.htm",
+      "sha256": "d40644f2ed9390faa473374537ff9e6942179df356f1c1330a7e88f4634865dd"
+    },
+    {
+      "file": "jgs/easter.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/easter.htm",
+      "sha256": "511e4181451aa70925a50bfb765578e21c0533b925b1a6d9507be6b43a191fb0"
+    },
+    {
+      "file": "jgs/electro.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/electro.htm",
+      "sha256": "bb47b1ed04d3b46575e79163fd780ed94a0f5c90b86cc5486e6c611e1300f7d6"
+    },
+    {
+      "file": "jgs/farm.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/farm.htm",
+      "sha256": "8af162f90c2c33dff134927137a320175f560b9911cdab8fb19ab7d1d03ace5b"
+    },
+    {
+      "file": "jgs/flag.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/flag.htm",
+      "sha256": "c873c71048d87c3af5d1f27e6cc15311086c70f5e221a94db745186f8442d6e4"
+    },
+    {
+      "file": "jgs/flowers.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/flowers.htm",
+      "sha256": "37c02a4d1b4123fb693ccc1ba75447a34bca2abde1111e4a86cf691e0cece7b7"
+    },
+    {
+      "file": "jgs/food.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/food.htm",
+      "sha256": "c81da2f2846220404a54f957119119fff3ab89174fc9ebeb05f47e143696e31a"
+    },
+    {
+      "file": "jgs/haloween.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/haloween.htm",
+      "sha256": "ab99c76a5519ec8ba3cd455e9154c56710ee41ae009d436dfc314a01646d20ca"
+    },
+    {
+      "file": "jgs/halowen2.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/halowen2.htm",
+      "sha256": "c9cdb2cb791252bad2db7c123e0ef2549c77c347445fbbfe164fdf8a8e5b79a8"
+    },
+    {
+      "file": "jgs/insects.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/insects.htm",
+      "sha256": "f363cb37df440451a7f6d1e27b2e6e30ac365eba970d71f836cd908d182fb48a"
+    },
+    {
+      "file": "jgs/july4.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/july4.htm",
+      "sha256": "884ed6de17cb88d73f007252c2a6e0dbc27f4f90fdd105bbf34719f40f06b0fa"
+    },
+    {
+      "file": "jgs/music.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/music.htm",
+      "sha256": "776731de35427e9948f1859e76a16a8f0c0c28af7f4a5576ff291ed140125927"
+    },
+    {
+      "file": "jgs/mythical.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/mythical.htm",
+      "sha256": "fa108cdf978312490013dd89ca615955eedac4935c1f924c665895fe6a15e583"
+    },
+    {
+      "file": "jgs/mythical2.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/mythical2.htm",
+      "sha256": "5a56aae8477a9bfc72ffca90148dcc7565847b6bd5855c11c33accf7fad2f83a"
+    },
+    {
+      "file": "jgs/mythos.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/mythos.htm",
+      "sha256": "c556d5bdda1b361913642a7504397e488b6604fa496098082533522d70e92ff8"
+    },
+    {
+      "file": "jgs/mythos2.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/mythos2.htm",
+      "sha256": "f00f3262f3fba798e8b1a2363afc975857ef1c40b67ed4d990e8f5ffcc8bb608"
+    },
+    {
+      "file": "jgs/nature.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/nature.htm",
+      "sha256": "35d9e77f6789f8cdb45f25d3228cce29917cca2e3e215f171b459b36c98563f0"
+    },
+    {
+      "file": "jgs/newyear.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/newyear.htm",
+      "sha256": "c0ea1ca3989f9b1dd67a65c01cf9525f07ef6a614efe42cd0f4bd51154f820cc"
+    },
+    {
+      "file": "jgs/oddsends.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/oddsends.htm",
+      "sha256": "87975f750278d7eeb5f44232358c132b434312c21fc2fe65fba269306da25f80"
+    },
+    {
+      "file": "jgs/pets.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/pets.htm",
+      "sha256": "c93f07d0c451c1739b92ed22d7f6f80c0439dc7772ac37ed93933cda3cae6aec"
+    },
+    {
+      "file": "jgs/pets2.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/pets2.htm",
+      "sha256": "4b279775cb47081329efd6bcf388de5ef920c18c1a9b03fc2ec2a40f613b549c"
+    },
+    {
+      "file": "jgs/reptiles.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/reptiles.htm",
+      "sha256": "b865f51966c65e43c0adef82c4f7902b10657ec0bcc94303ca823a99aac61cc6"
+    },
+    {
+      "file": "jgs/school.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/school.htm",
+      "sha256": "86b687108b1f250412718c6d4d7c771058d123b9e0e71e6cfef15d2783093d85"
+    },
+    {
+      "file": "jgs/small.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/small.htm",
+      "sha256": "7ebebe710f003c6f3c0442ff04a683934119c6cd78cd378bfad04d7caa6a13fb"
+    },
+    {
+      "file": "jgs/sports.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/sports.htm",
+      "sha256": "88f2cae5e49fcd3916bf3ad55ca3a5ab80a1dca1effddee588b05a1cead2621a"
+    },
+    {
+      "file": "jgs/stpat.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/stpat.htm",
+      "sha256": "d8055c39db8c86583aa6dfa76724a9c08793bf8068b8bfb637fde10d2f623f88"
+    },
+    {
+      "file": "jgs/swim.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/swim.htm",
+      "sha256": "b72ae28b0b4fa9ef3de4685c6a806359b4760e16b47dc25db9535daeef804f96"
+    },
+    {
+      "file": "jgs/teddy.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/teddy.htm",
+      "sha256": "67a7707d8253ffaea85c5fba8ba64d3811fee74c868c7676089e66aca0a5ed34"
+    },
+    {
+      "file": "jgs/tgiving.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/tgiving.htm",
+      "sha256": "cbf2199a589796e3c7f5726b9b5c1a1ed5eabbae1896157fbaef75691c7c097c"
+    },
+    {
+      "file": "jgs/transp.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/transp.htm",
+      "sha256": "a6ed59d80693addaa9fcf432b0493add6abaa5945dc7c6694230f97dbb896dbe"
+    },
+    {
+      "file": "jgs/valentin.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/valentin.htm",
+      "sha256": "10802d2904de2a6c9865ec8bb0d5c8a3b40c59591e41d0d2f79f9955e1fe14e3"
+    },
+    {
+      "file": "jgs/wedding.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/wedding.htm",
+      "sha256": "bb6a30e5ccd7d76933414b99ac45002cd56122e58fa670d6734250cf34cf84e2"
+    },
+    {
+      "file": "jgs/wildlife.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/wildlife.htm",
+      "sha256": "13047d0f7bde991ab8f8cc0a52048604242c9890143feddc82b3a9e43a4b46a8"
+    },
+    {
+      "file": "jgs/xmas.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/xmas.htm",
+      "sha256": "68914b87f30a121a0452ae28a2309d46e9c839341a9badb306b71d056fef6b3e"
+    },
+    {
+      "file": "jgs/zoo.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/zoo.htm",
+      "sha256": "d2d56f9cd428748f094bf98268382e2cc1c1af7db8ef3468222ec0374883f137"
+    },
+    {
+      "file": "ldb-animalascii.txt",
+      "url": "https://asciiartist.com/ldb/animalascii.txt",
+      "sha256": "18b58efaf19c4d065a88076eb8edbebc77f83da1afd6696db44a7745011a32dc"
+    },
+    {
+      "file": "ldb-autumnascii.txt",
+      "url": "https://asciiartist.com/ldb/autumnascii.txt",
+      "sha256": "2e3f5df55bf06d1b9fa85eca793f03fffa442e2f9147b0469c5ae8f99ae99d7b"
+    },
+    {
+      "file": "ldb-buildingsascii.txt",
+      "url": "https://asciiartist.com/ldb/buildingsascii.txt",
+      "sha256": "ddeec6fa3ca678ee05711f04a97ff880ac34cf660a632851f151c31ec266c4bd"
+    },
+    {
+      "file": "ldb-canadianascii.txt",
+      "url": "https://asciiartist.com/ldb/canadianascii.txt",
+      "sha256": "34905085ec58a7f48e80e42a819c62c559c25994447d1861f66dc0849df7e9c0"
+    },
+    {
+      "file": "ldb-christmasascii.txt",
+      "url": "https://asciiartist.com/ldb/christmasascii.txt",
+      "sha256": "c9258298297eb8d765f337ba90568437597611d8b1bf933f66c07c2e815d44cd"
+    },
+    {
+      "file": "ldb-communicationsascii.txt",
+      "url": "https://asciiartist.com/ldb/communicationsascii.txt",
+      "sha256": "a80d11b7909aff6e05389f5ff7848e8d94a9c57901847b4cf68bc6662c889a19"
+    },
+    {
+      "file": "ldb-dragonascii.txt",
+      "url": "https://asciiartist.com/ldb/dragonascii.txt",
+      "sha256": "e3440cc22e5f830428fd4e6634ea956c8677655a37a9eb9509d2be32d412fafd"
+    },
+    {
+      "file": "ldb-fantasyascii.txt",
+      "url": "https://asciiartist.com/ldb/fantasyascii.txt",
+      "sha256": "2865de3d67285f8038c7aa84eda763eb9487e173831425ca7c5ddb7de81d7aac"
+    },
+    {
+      "file": "ldb-floralascii.txt",
+      "url": "https://asciiartist.com/ldb/floralascii.txt",
+      "sha256": "e69d70b4859d53c397712916b3061c3ea8781a5779a6143642aeda1dd57d281c"
+    },
+    {
+      "file": "ldb-foodascii.txt",
+      "url": "https://asciiartist.com/ldb/foodascii.txt",
+      "sha256": "75688694f39151893057760bc3d7b4a08d775a8b7b0f1eb459f578f5892b8e7a"
+    },
+    {
+      "file": "ldb-halloweenascii.txt",
+      "url": "https://asciiartist.com/ldb/halloweenascii.txt",
+      "sha256": "18baa345218bc7d6f756694068439679c5dc428ad56e993bcad69585257a0f6d"
+    },
+    {
+      "file": "ldb-hobbiescraftsascii.txt",
+      "url": "https://asciiartist.com/ldb/hobbiescraftsascii.txt",
+      "sha256": "b28ae724b108130ae8783b2fb1cc4af5d090872cca891e12dd8e531a936fe6bc"
+    },
+    {
+      "file": "ldb-home.html",
+      "url": "https://asciiartist.com/",
+      "sha256": "740c112f7298bc110d8c04de676d9b87ce0476a80f7cb8b16190d1fdb3087e64"
+    },
+    {
+      "file": "ldb-insectbugascii.txt",
+      "url": "https://asciiartist.com/ldb/insectbugascii.txt",
+      "sha256": "5e4a7569c4b86ca302e0f8d45e84084f04d3b56db13318d62271f635334ee0a4"
+    },
+    {
+      "file": "ldb-landscapeascii.txt",
+      "url": "https://asciiartist.com/ldb/landscapeascii.txt",
+      "sha256": "cb61cf87cfde78f0a71b921bfa2c59031ebf000686afc386ecb2768936a7b492"
+    },
+    {
+      "file": "ldb-mischolidayascii.txt",
+      "url": "https://asciiartist.com/ldb/mischolidayascii.txt",
+      "sha256": "0fff94a3e5af1910b33488918cb955b8caee0ca08dbd79503b7d1abac26f2e5e"
+    },
+    {
+      "file": "ldb-other.txt",
+      "url": "https://asciiartist.com/ldb/other.txt",
+      "sha256": "b2b9d37603fb18e2a298fd6f56d37c292d18abc75077ba7e7a817e47da097526"
+    },
+    {
+      "file": "ldb-paganascii.txt",
+      "url": "https://asciiartist.com/ldb/paganascii.txt",
+      "sha256": "0a80ffce83bd6db2ddd91d7fa1fa01735315d203da88afff5acdf2f1a65b9d71"
+    },
+    {
+      "file": "ldb-peopleascii.txt",
+      "url": "https://asciiartist.com/ldb/peopleascii.txt",
+      "sha256": "8b033314acb8c7e5799a0b5d538bb7b3bc23b8e6d7a879a99951180741d5b50b"
+    },
+    {
+      "file": "ldb-remembranceascii.txt",
+      "url": "https://asciiartist.com/ldb/remembranceascii.txt",
+      "sha256": "6fb8f337e0f262412321f51e2140a193c57f97981c49ceeb490f65af3b5bbd99"
+    },
+    {
+      "file": "ldb-sciencefictionascii.txt",
+      "url": "https://asciiartist.com/ldb/sciencefictionascii.txt",
+      "sha256": "fe7ad66bc84ecb391c3a41c427989c6a7a8604db3d818342efcb16586fcee907"
+    },
+    {
+      "file": "ldb-springascii.txt",
+      "url": "https://asciiartist.com/ldb/springascii.txt",
+      "sha256": "83e24a727d94d29d6cd54b4786ea0a317feb0f01d412bc224a9c7072e6f3f61d"
+    },
+    {
+      "file": "ldb-stpatricksdayascii.txt",
+      "url": "https://asciiartist.com/ldb/stpatricksdayascii.txt",
+      "sha256": "779bc3f661f3442281f5a3c790cee9e3caf87dea4bf3decd5326270f4acd0e38"
+    },
+    {
+      "file": "ldb-summerascii.txt",
+      "url": "https://asciiartist.com/ldb/summerascii.txt",
+      "sha256": "fc24d726959a571108c51dfcde9218fc757edca51c21680b58271c30e011d5d9"
+    },
+    {
+      "file": "ldb-technologyascii.txt",
+      "url": "https://asciiartist.com/ldb/technologyascii.txt",
+      "sha256": "e98dd74f66d3c33b7071f285e0ce229ef6d9ffbbdc865393e617d764f1b089a1"
+    },
+    {
+      "file": "ldb-transportationtravelascii.txt",
+      "url": "https://asciiartist.com/ldb/transportationtravelascii.txt",
+      "sha256": "584875cb91864cf66a2a19509f39924c5158deb5b3fa00f26450dc5f8547bae2"
+    },
+    {
+      "file": "ldb-valentineascii.txt",
+      "url": "https://asciiartist.com/ldb/valentineascii.txt",
+      "sha256": "8144fea15df833ae439e73e3123b1dd48f57501ab8b5c6a3d176315e1b0b983c"
+    },
+    {
+      "file": "ldb-winterascii.txt",
+      "url": "https://asciiartist.com/ldb/winterascii.txt",
+      "sha256": "241ec3640d0840970f3f37dac93d8a1cf4df188a6811c9a4c0d486edff627549"
+    },
+    {
+      "file": "roy-ascii.zip",
+      "url": "https://www.roysac.com/images/galleries/ZIP/Roy_ASCII.ZIP",
+      "sha256": "1db7c732cc6725f7c1d473e0616876390e329872db94d8b610edd3c78ba0ce5d"
+    },
+    {
+      "file": "roy-gallery.html",
+      "url": "https://www.roysac.com/roy_asciishow.html",
+      "sha256": "83928231be532bed11a8b730fecc34a496afaa5dbaedb4ae4bfb90a85065e59e"
+    },
+    {
+      "file": "jgs/men.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/men.htm",
+      "sha256": "7b7ec7790e5e48b8431f01defbb46e29bf276c1aca367e02e4e6631de3531e8a"
+    },
+    {
+      "file": "jgs/women.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/women.htm",
+      "sha256": "ab2d3a32eb2874a2e260a48d073ca3abb4e89cecb96dfda1effa8da065171eb9"
+    },
+    {
+      "file": "jgs/couples.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/couples.htm",
+      "sha256": "00adca67da83c2a3293e60a0cfe611030028cecf2c74bcc713724be1a8dd293b"
+    },
+    {
+      "file": "jgs/kids.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/kids.htm",
+      "sha256": "ab1072f68025e60dcf5bbb8c378f94f2511513b1c3223f5236a0dff10a2668c3"
+    },
+    {
+      "file": "jgs/people.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/people.htm",
+      "sha256": "7b20b09714737a8b93a8d73e0193da02fe21a81945a715762d4dd45d1212c8c8"
+    },
+    {
+      "file": "jgs/religion.htm",
+      "url": "https://priede.bf.lu.lv/atteli/ASCII/jgs/www.geocities.com/SoHo/7373/religion.htm",
+      "sha256": "909b1167def4f9a5014db888cbc9c4e4dc7b1d559561eccc3b8e90f96a5b4c44"
+    }
+  ]
+}
