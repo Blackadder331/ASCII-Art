@@ -27,15 +27,15 @@ export function pixelsToAscii(pixels, width, height, { ramp = RAMPS.classic, con
 }
 
 const IGNORE = new Set('a an the of some please make create generate draw show me ascii art image picture illustration photo in style with cute tiny big little detailed realistic simple black white cool beautiful green my i want can you could would like to'.split(' '));
-const ALIASES = { saturn: 'ringed planet', kitty: 'cat', kitten: 'cat', cats: 'cat', doggo: 'dog', puppy: 'dog', flower: 'rose', flowers: 'rose', butterflies: 'butterfly', mushrooms: 'mushroom', spooky: 'ghost', aliens: 'alien', astronaut: 'astronaut', controller: 'video game', gaming: 'video game', earth: 'globe showing europe-africa', moon: 'full moon', dinosaur: 't-rex' };
+const ALIASES = { kitty: 'cat', kitten: 'cat', cats: 'cat', doggo: 'dog', puppy: 'dog', dogs: 'dog', flowers: 'flower', roses: 'rose', skulls: 'skull', skeletons: 'skeleton', dragons: 'dragon', castles: 'castle', boats: 'boat', trees: 'tree', bunnies: 'rabbit', rabbits: 'rabbit', penguins: 'penguin', trains: 'train', cars: 'car' };
 
 export function cleanPrompt(prompt) {
   return prompt.toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, ' ').split(/\s+/).filter(word => word && !IGNORE.has(word)).join(' ').trim();
 }
 
-export function searchLibrary(library, query, limit = 30) {
+export function searchLibrary(library, query, limit = Infinity) {
   const cleaned = cleanPrompt(query);
-  const normalized = ALIASES[cleaned] || cleaned;
+  const normalized = cleaned.split(/\s+/).map(word => ALIASES[word] || word).join(' ');
   if (!normalized) return query.trim() ? [] : library.slice(0, limit);
   const words = normalized.split(/\s+/);
   return library.map(item => {
@@ -43,10 +43,10 @@ export function searchLibrary(library, query, limit = 30) {
     const tags = item.tags.toLowerCase().split(/\s*,\s*/);
     const nameWords = name.split(/[\s-]+/);
     let score = name === normalized ? 200 : 0;
-    if (name.includes(normalized)) score += 55;
+    if (nameWords[0] === normalized) score += 30;
     if (tags.includes(normalized)) score += 42;
     const matched = words.filter(word => nameWords.includes(word) || tags.some(tag => tag.split(/[\s-]+/).includes(word)));
-    if (matched.length !== words.length && !score) return { item, score: 0 };
+    if (matched.length !== words.length) return { item, score: 0 };
     for (const word of words) {
       if (nameWords.includes(word)) score += 15;
       if (tags.includes(word)) score += 7;
@@ -54,6 +54,15 @@ export function searchLibrary(library, query, limit = 30) {
     if (score) score -= Math.min(name.length / 12, 8);
     return { item, score };
   }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, limit).map(x => x.item);
+}
+
+export function artDimensions(text) {
+  const lines = text.split('\n');
+  return { width: Math.max(1, ...lines.map(line => line.length)), height: lines.length };
+}
+
+export function cycleIndex(index, step, length) {
+  return length > 0 ? ((index + step) % length + length) % length : 0;
 }
 
 export function outputSize(sourceWidth, sourceHeight, columns) {

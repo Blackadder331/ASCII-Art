@@ -1,16 +1,14 @@
-import { RAMPS, pixelsToAscii, searchLibrary, cleanPrompt, outputSize, escapeXML, safeFilename } from './core.js';
+import { RAMPS, pixelsToAscii, searchLibrary, artDimensions, cycleIndex, outputSize, escapeXML, safeFilename } from './core.js';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
-const LOCAL_IDS = new Set(['1F98B','1F344','1F480','1FA90','1F408','1F339','1F680','1F47B','1F409','1F3F0','1F419','1F33B','1F30D','1F47D','1F335','1F3AE']);
 const STARTERS = [
-  { id: '1F480', title: 'Memento mori', category: 'THE CLASSICS' },
-  { id: '1FA90', title: 'Out of this world', category: 'SPACE' },
-  { id: '1F344', title: 'Forest floor', category: 'NATURE' },
-  { id: '1F339', title: 'Say it with flowers', category: 'BOTANICAL' },
+  { id: 'ascii-bin-128', query: 'skull', title: 'Memento mori', category: 'THE CLASSICS' },
+  { id: 'ascii-bin-56', query: 'dragon', title: 'Here be dragons', category: 'FANTASY' },
+  { id: 'ascii-bin-254', query: 'cat', title: 'Nine lives in text', category: 'CHARACTERS' },
+  { id: 'ascii-bin-219', query: 'rose', title: 'Say it with flowers', category: 'BOTANICAL' },
 ];
-const state = { library: [], source: null, text: '', name: '', credit: '', sourceURL: '', request: 0, busy: false, zoom: 1, online: false, category: 'all', limit: 40, dimensions: { width: 100, height: 58 } };
-const images = new Map();
+const state = { library: [], source: null, nativeArt: null, matches: [], matchIndex: 0, query: '', matchCategory: 'all', text: '', name: '', credit: '', sourceURL: '', request: 0, busy: false, zoom: 1, category: 'all', limit: 40, dimensions: { width: 100, height: 58 } };
 let toastTimer;
 
 function notify(message) {
@@ -30,7 +28,7 @@ function setBusy(busy, message = 'Finding your next masterpiece…') {
   $('#loading-overlay').hidden = !busy;
   $('#loading-label').textContent = message;
   $('#generate-button').disabled = busy;
-  $('#generate-label').textContent = busy ? 'Making characters…' : 'Generate ASCII';
+  $('#generate-label').textContent = busy ? 'Making characters…' : 'Find / create ASCII';
   $('#copy-button').disabled = busy || !state.text;
   $('#download-button').disabled = busy || !state.text;
   $('#preview-panel').setAttribute('aria-busy', String(busy));
@@ -38,7 +36,7 @@ function setBusy(busy, message = 'Finding your next masterpiece…') {
 
 async function fetchJSON(url, timeout = 12000) {
   const response = await fetch(url, { signal: AbortSignal.timeout(timeout) });
-  if (!response.ok) throw new Error(`The image service is unavailable (${response.status}). Try an upload or a library illustration.`);
+    if (!response.ok) throw new Error(`The library is unavailable (${response.status}). Try an image upload.`);
   return response.json();
 }
 
@@ -51,18 +49,6 @@ function readImage(url, crossOrigin = false) {
     image.onerror = () => { clearTimeout(timer); reject(new Error('That image could not be opened. Try another subject or upload an image.')); };
     image.src = url;
   });
-}
-
-function assetURL(item) {
-  return LOCAL_IDS.has(item.id) ? `./assets/openmoji/${item.id}.svg` : `https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/${item.id}.svg`;
-}
-
-async function libraryImage(item) {
-  if (!images.has(item.id)) {
-    const promise = readImage(assetURL(item), !LOCAL_IDS.has(item.id)).catch(error => { images.delete(item.id); throw error; });
-    images.set(item.id, promise);
-  }
-  return images.get(item.id);
 }
 
 function makeAscii(source, columns, settings = {}) {
@@ -92,16 +78,20 @@ function fitArt() {
 function render() {
   $('#width-value').value = `${$('#width').value} columns`;
   $('#contrast-value').value = `${Number($('#contrast').value).toFixed(1)}×`;
-  if (!state.source) return;
+  if (!state.source && !state.nativeArt) return;
   try {
-    const result = makeAscii(state.source, Number($('#width').value), { ramp: RAMPS[$('#character-set').value], contrast: Number($('#contrast').value), invert: $('#invert').checked });
+    const result = state.nativeArt
+      ? { text: state.nativeArt.text, ...artDimensions(state.nativeArt.text) }
+      : makeAscii(state.source, Number($('#width').value), { ramp: RAMPS[$('#character-set').value], contrast: Number($('#contrast').value), invert: $('#invert').checked });
     state.text = result.text;
     state.dimensions = { width: result.width, height: result.height };
     $('#ascii-output').textContent = result.text;
     $('#ascii-output').setAttribute('aria-label', `ASCII art of ${state.name}, ${result.width} columns by ${result.height} rows`);
     $('#art-title').textContent = state.name.toUpperCase();
     $('#art-dimensions').textContent = `${result.width} × ${result.height}`;
-    $('#character-count').textContent = `${(result.width * result.height).toLocaleString()} CHARACTERS`;
+    $('#character-count').textContent = `${result.text.replace(/\n/g, '').length.toLocaleString()} CHARACTERS`;
+    $('#conversion-settings').hidden = Boolean(state.nativeArt);
+    $('#archive-note').hidden = !state.nativeArt;
     fitArt();
   } catch (error) {
     setStatus(error.name === 'SecurityError' ? 'This image does not allow browser conversion. Download it and use “From an image” instead.' : error.message, true);
@@ -110,10 +100,18 @@ function render() {
 
 function setSource(source, name, credit, sourceURL = '') {
   state.source = source;
+  state.nativeArt = null;
+  state.matches = [];
   state.name = name;
   state.credit = credit;
   state.sourceURL = sourceURL;
   state.zoom = 1;
+  renderCredit(credit, sourceURL);
+  renderNavigator();
+  render();
+}
+
+function renderCredit(credit, sourceURL) {
   const creditNode = $('#source-credit');
   creditNode.replaceChildren();
   if (sourceURL) {
@@ -124,64 +122,47 @@ function setSource(source, name, credit, sourceURL = '') {
     link.textContent = credit;
     creditNode.append(link);
   } else creditNode.textContent = credit;
+}
+
+function renderNavigator() {
+  $('#result-navigator').hidden = !state.matches.length;
+  $('#result-count').textContent = `${state.matchIndex + 1} of ${state.matches.length}`;
+  $('#result-query').textContent = state.query ? `Matches for “${state.query}”` : 'Browsing the archive';
+  $('#previous-art').disabled = $('#next-art').disabled = state.matches.length < 2;
+}
+
+function selectArt(item, { matches = state.library, query = '', category = 'all', scroll = false } = {}) {
+  ++state.request;
+  state.matches = matches;
+  state.matchIndex = matches.findIndex(match => match.id === item.id);
+  state.query = query;
+  state.matchCategory = category;
+  state.source = null;
+  state.nativeArt = item;
+  state.name = item.name;
+  state.credit = `${item.name} · Collected by ASCII Bin. Original signatures retained; see source for credits and reuse information.`;
+  state.sourceURL = item.sourceURL;
+  state.zoom = 1;
+  renderCredit('ASCII BIN · SOURCE & CREDITS ↗', item.sourceURL);
+  renderNavigator();
   render();
+  setBusy(false);
+  setStatus(`${matches.length} archive ${matches.length === 1 ? 'match' : 'matches'}. ${item.name}.`);
+  if (scroll) $('#studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function compose(sources) {
-  if (sources.length === 1) return sources[0];
-  const canvas = document.createElement('canvas');
-  canvas.width = 480 * sources.length;
-  canvas.height = 520;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
-  sources.forEach((img,i) => ctx.drawImage(img, i * 480 + 20, 40, 440, 440));
-  return canvas;
-}
-
-async function selectArt(item, { scroll = false } = {}) {
-  const request = ++state.request;
-  setBusy(true, 'Turning an illustration into characters…');
-  setStatus('');
-  try {
-    const image = await libraryImage(item);
-    if (request !== state.request) return;
-    setSource(image, item.name, 'OpenMoji · CC BY-SA 4.0', `https://openmoji.org/library/emoji-${item.id}/`);
-    state.credit = `OpenMoji: ${item.name}. Artist: ${item.author}. Adapted to ASCII. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/).`;
-    $('#prompt').value = item.name;
-    setStatus(`Found in the library: ${item.name}.`);
-    if (scroll) $('#studio').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } catch (error) { if (request === state.request) setStatus(error.message, true); }
-  finally { if (request === state.request) setBusy(false); }
-}
-
-async function onlinePhoto(prompt, request) {
-  const term = cleanPrompt(prompt) || prompt.trim();
-  const params = new URLSearchParams({ action: 'query', generator: 'search', gsrsearch: term, gsrlimit: '6', gsrnamespace: '0', prop: 'pageimages', piprop: 'thumbnail|name', pithumbsize: '800', pilicense: 'free', format: 'json', origin: '*' });
-  const data = await fetchJSON(`https://en.wikipedia.org/w/api.php?${params}`);
-  const pages = Object.values(data.query?.pages || {}).filter(p => p.thumbnail?.source).sort((a,b) => a.index - b.index);
-  if (!pages.length) throw new Error(`No image found for “${prompt}”. Try a simpler subject, browse the library, or upload a reference image.`);
-  for (const page of pages.slice(0, 3)) {
-    if (request !== state.request) return;
-    try {
-      const image = await readImage(page.thumbnail.source, true);
-      // Read a sample before committing: remote servers must permit canvas access.
-      makeAscii(image, 30);
-      if (request !== state.request) return;
-      const url = `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(page.pageimage)}`;
-      setSource(image, page.title, 'Wikimedia · Source & license', url);
-      state.credit = `Photo: ${page.title}. Source and original license: ${url}. Converted to ASCII with ASCII Studio.`;
-      setStatus(`Online photo found: ${page.title}. See the source link for its license.`);
-      return;
-    } catch (error) { if (page === pages.slice(0,3).at(-1)) throw error; }
-  }
+function cycleArt(step) {
+  if (!state.matches.length) return;
+  const item = state.matches[cycleIndex(state.matchIndex, step, state.matches.length)];
+  selectArt(item, { matches: state.matches, query: state.query, category: state.matchCategory });
 }
 
 async function generate() {
   const prompt = $('#prompt').value.trim();
   if (!prompt) { setStatus('Give your idea a few words first.', true); $('#prompt').focus(); return; }
-  const request = ++state.request;
+  ++state.request;
   setStatus('');
-  setBusy(true, state.online ? 'Searching online photos…' : 'Finding the right characters…');
+  setBusy(true, 'Finding the right characters…');
   try {
     const banner = prompt.match(/^(?:text|banner|write|words?)\s*:\s*(.+)$/is);
     if (banner) {
@@ -197,23 +178,16 @@ async function generate() {
       setSource(canvas,content,'YOUR WORDS · ASCII STUDIO');state.credit='';
       setStatus('Your words, with a little more character.');return;
     }
-    if (state.online) { await onlinePhoto(prompt, request); return; }
-    const parts = prompt.split(/\s+(?:and|plus)\s+|\s*\+\s*/i).filter(Boolean).slice(0,4);
-    const items = parts.map(part => searchLibrary(state.library, part, 1)[0]);
-    if (items.every(Boolean)) {
-      const sources = await Promise.all(items.map(libraryImage));
-      if (request !== state.request) return;
-      const name = items.map(item => item.name).join(' + ');
-      setSource(compose(sources), name, 'OpenMoji · CC BY-SA 4.0', items.length === 1 ? `https://openmoji.org/library/emoji-${items[0].id}/` : 'https://openmoji.org/');
-      state.credit = `OpenMoji: ${items.map(x => `${x.name} by ${x.author}`).join('; ')}. Adapted to ASCII. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/).`;
-      setStatus(`Found in the library: ${name}.`);
-    } else {
-      $('#loading-label').textContent = 'Looking beyond the library…';
-      await onlinePhoto(prompt, request);
+    const matches = searchLibrary(state.library, prompt);
+    if (matches.length) selectArt(matches[0], { matches, query: prompt });
+    else {
+      state.matches = [];
+      renderNavigator();
+      setStatus(`No archive matches for “${prompt}” yet. Try a simpler keyword, explore the library, or upload an image to create it. The previous artwork is still on the canvas.`, true);
     }
   } catch (error) {
-    if (request === state.request) setStatus(error.name === 'TimeoutError' || error instanceof TypeError ? 'Online search is unavailable right now. Try the art library or upload an image.' : error.message, true);
-  } finally { if (request === state.request) setBusy(false); }
+    setStatus(error.message, true);
+  } finally { setBusy(false); }
 }
 
 function switchTab(mode) {
@@ -333,28 +307,54 @@ function renderLibrary() {
   const search = $('#library-search').value;
   let items = state.category === 'all' ? state.library : state.library.filter(item => item.group === state.category);
   if (search.trim()) items = searchLibrary(items, search, items.length);
-  $('#library-results-count').textContent = `${items.length.toLocaleString()} illustrations${search.trim() ? ` matching “${search.trim()}”` : ''}`;
+  $('#library-results-count').textContent = `${items.length.toLocaleString()} ASCII artworks${search.trim() ? ` matching “${search.trim()}”` : ''}`;
+  thumbnailObserver.disconnect();
   $('#library-grid').replaceChildren();
   for (const item of items.slice(0,state.limit)) {
-    const button = document.createElement('button');button.className='library-item';button.setAttribute('aria-label',`Create ${item.name}`);
-    const img = document.createElement('img');img.src=assetURL(item);img.alt='';img.loading='lazy';
-    img.onerror = () => { img.style.visibility='hidden'; };
+    const button = document.createElement('button');button.className='library-item';button.setAttribute('aria-label',`View ${item.name}`);
+    button.classList.toggle('selected', state.nativeArt?.id === item.id);
+    const art = makeThumbnail(item, 'library-art');
     const label = document.createElement('span');label.textContent=item.name;
-    button.append(img,label);button.addEventListener('click',() => { $('#library-dialog').close();switchTab('imagine');selectArt(item,{scroll:true}); });
+    button.append(art,label);button.addEventListener('click',() => {
+      $('#library-dialog').close();switchTab('imagine');
+      $('#prompt').value = search;
+      selectArt(item,{matches:items,query:search,category:state.category,scroll:true});
+    });
     $('#library-grid').append(button);
   }
-  if (!items.length) { const empty=document.createElement('p');empty.textContent='No matches yet. Try a simpler word, or use online photo search in the studio.';empty.style.cssText='grid-column:1/-1;padding:25px 0;font-size:13px';$('#library-grid').append(empty); }
+  if (!items.length) { const empty=document.createElement('p');empty.textContent='No archive matches yet. Try a simpler keyword, or create your own from an image in the studio.';empty.style.cssText='grid-column:1/-1;padding:25px 0;font-size:14px';$('#library-grid').append(empty); }
   $('#load-more').hidden = items.length <= state.limit;
+  $$('.ascii-thumbnail').forEach(node => thumbnailObserver.observe(node));
 }
 
-async function renderStarters() {
+function makeThumbnail(item, className) {
+  const art = document.createElement('div');art.className=`ascii-thumbnail ${className}`;
+  const pre=document.createElement('pre');pre.setAttribute('aria-hidden','true');pre.textContent=item.text;
+  const size=artDimensions(item.text);art.dataset.columns=size.width;art.dataset.rows=size.height;
+  art.append(pre);thumbnailObserver.observe(art);return art;
+}
+
+const thumbnailObserver = new ResizeObserver(entries => {
+  for (const {target} of entries) {
+    const font=Math.min((target.clientWidth-24)/(Number(target.dataset.columns)*.6),(target.clientHeight-24)/(Number(target.dataset.rows)*1.04),12);
+    target.querySelector('pre').style.fontSize=`${Math.max(1,font)}px`;
+  }
+});
+
+function openLibrary(query = '', category = 'all') {
+  state.category=category;state.limit=40;
+  $('#library-search').value=query;
+  $$('[data-category]').forEach(button=>button.classList.toggle('selected',button.dataset.category===category));
+  renderLibrary();$('#library-dialog').showModal();$('#library-search').focus();
+}
+
+function renderStarters() {
   for (const starter of STARTERS) {
     const item = state.library.find(x => x.id === starter.id);if (!item) continue;
-    const button = document.createElement('button');button.className='starter-card';button.setAttribute('aria-label',`Create ${item.name}`);
-    const art = document.createElement('div');art.className='starter-art';const pre=document.createElement('pre');pre.setAttribute('aria-hidden','true');art.append(pre);
+    const button = document.createElement('button');button.className='starter-card';button.setAttribute('aria-label',`Browse ${starter.query} ASCII art`);
+    const art = makeThumbnail(item, 'starter-art');
     const info = document.createElement('div');info.className='starter-info';const title=document.createElement('span');title.textContent=starter.title;const category=document.createElement('span');category.textContent=starter.category;info.append(title,category);button.append(art,info);
-    button.addEventListener('click',() => { switchTab('imagine');selectArt(item,{scroll:true}); });$('#starter-grid').append(button);
-    try { pre.textContent = makeAscii(await libraryImage(item),66,{contrast:1.3}).text; } catch { pre.textContent='[ + ]'; }
+    button.addEventListener('click',() => { switchTab('imagine');$('#prompt').value=starter.query;selectArt(item,{matches:searchLibrary(state.library,starter.query),query:starter.query,scroll:true}); });$('#starter-grid').append(button);
   }
 }
 
@@ -372,7 +372,10 @@ $$('[data-prompt]').forEach(button => button.addEventListener('click',() => { $(
 $('#imagine-tab').addEventListener('click',() => switchTab('imagine'));
 $('#upload-tab').addEventListener('click',() => switchTab('upload'));
 $$('[role=tab]').forEach(tab => tab.addEventListener('keydown',event => { if (['ArrowLeft','ArrowRight'].includes(event.key)) {event.preventDefault();const next=tab.id==='imagine-tab'?'upload':'imagine';switchTab(next);$(`#${next}-tab`).focus();} }));
-$('#online-search-toggle').addEventListener('click',() => { state.online=!state.online;$('#online-search-toggle').setAttribute('aria-pressed',String(state.online));$('#online-search-toggle').textContent=state.online?'Online photos on · use illustrations instead':'Search online photos instead';setStatus(state.online?'Your search terms will be sent to Wikipedia to find a source photo.':'Illustration library selected.'); });
+$('#previous-art').addEventListener('click',()=>cycleArt(-1));
+$('#next-art').addEventListener('click',()=>cycleArt(1));
+$('#view-matches').addEventListener('click',()=>openLibrary(state.query,state.matchCategory));
+$('#ascii-output').addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight'].includes(event.key)&&state.matches.length){event.preventDefault();cycleArt(event.key==='ArrowLeft'?-1:1);}});
 $('#drop-zone').addEventListener('click',() => $('#file-input').click());
 $('#file-input').addEventListener('change',event => uploadImage(event.target.files[0]));
 ['dragenter','dragover'].forEach(name => $('#drop-zone').addEventListener(name,event => {event.preventDefault();$('#drop-zone').classList.add('drag-over');}));
@@ -391,8 +394,8 @@ $('#zoom-in').addEventListener('click',() => {state.zoom=Math.min(3,state.zoom+.
 $('#zoom-out').addEventListener('click',() => {state.zoom=Math.max(.5,state.zoom-.25);fitArt();});
 $('#zoom-fit').addEventListener('click',() => {state.zoom=1;fitArt();});
 $('#expand-button').addEventListener('click',expandCanvas);
-$('#shuffle-button').addEventListener('click',()=>{const pool=state.library.filter(item=>LOCAL_IDS.has(item.id)&&item.name!==state.name);if(pool.length)selectArt(pool[Math.floor(Math.random()*pool.length)]);});
-$$('[data-open-library]').forEach(button=>button.addEventListener('click',()=>{renderLibrary();$('#library-dialog').showModal();$('#library-search').focus();}));
+$('#shuffle-button').addEventListener('click',()=>{const pool=state.library.filter(item=>item.name!==state.name);if(pool.length){switchTab('imagine');$('#prompt').value='';selectArt(pool[Math.floor(Math.random()*pool.length)]);}});
+$$('[data-open-library]').forEach(button=>button.addEventListener('click',()=>openLibrary()));
 $('#about-button').addEventListener('click',()=>$('#about-dialog').showModal());
 $$('[data-close-dialog]').forEach(button=>button.addEventListener('click',()=>button.closest('dialog').close()));
 $$('dialog').forEach(dialog=>dialog.addEventListener('click',event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}}));
@@ -407,9 +410,9 @@ async function init() {
   try {
     state.library = await fetchJSON('./assets/library.json');
     $('#library-count').textContent=state.library.length.toLocaleString();
-    const butterfly = await readImage('./assets/butterfly.svg');
-    setSource(butterfly,'Butterfly study','ORIGINAL STUDY · ASCII STUDIO');
-    state.credit='';
+    const matches = searchLibrary(state.library, 'skull');
+    $('#prompt').value = 'skull';
+    selectArt(matches[0], {matches, query:'skull'});
     renderStarters();
   } catch(error){setStatus('The studio could not load its library. You can still upload your own image.',true);}
   finally {setBusy(false);}

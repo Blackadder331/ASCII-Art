@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { pixelsToAscii, outputSize, searchLibrary, cleanPrompt, escapeXML } from '../dist/core.js';
+import { pixelsToAscii, outputSize, searchLibrary, cleanPrompt, artDimensions, cycleIndex, escapeXML } from '../dist/core.js';
 
 test('luminance runs from whitespace to dense ink and preserves the grid', () => {
   const pixels = new Uint8ClampedArray([255,255,255,255,128,128,128,255,0,0,0,255,255,255,255,255]);
@@ -20,14 +20,47 @@ test('portrait and landscape output compensate for monospace character proportio
   assert.throws(()=>outputSize(0,100,100));
 });
 
-test('natural language prompts and aliases resolve to meaningful library subjects', async () => {
+test('keyword search returns every matching original artwork, including aliases', async () => {
   const library = JSON.parse(await readFile(new URL('../dist/assets/library.json',import.meta.url)));
-  assert.equal(searchLibrary(library,'Please draw a cute cat',1)[0].id,'1F408');
-  assert.equal(searchLibrary(library,'Saturn',1)[0].id,'1FA90');
-  assert.equal(searchLibrary(library,'A butterfly',1)[0].id,'1F98B');
-  assert.equal(searchLibrary(library,'mushrooms',1)[0].id,'1F344');
+  const skulls = searchLibrary(library,'Please draw a skull');
+  assert.equal(skulls.length, 7);
+  assert.equal(skulls[0].id, 'ascii-bin-128');
+  assert.equal(new Set(skulls.map(item => item.text)).size, 7);
+  assert.deepEqual(searchLibrary(library,'skulls'), skulls);
+  assert.equal(searchLibrary(library,'Please draw a cute cat').length, 2);
+  assert.equal(searchLibrary(library,'horned skull').length, 2);
+  assert.equal(searchLibrary(library,'rose').length, 5);
   assert.equal(searchLibrary(library,'glorpzxywwq',1).length,0);
   assert.equal(cleanPrompt('Please make ASCII art of a rose'),'rose');
+  assert.equal(searchLibrary(library,'').length, library.length);
+  assert.equal(searchLibrary([...library,...library,...library,...library,...library],'skull').length,35);
+  assert.equal(searchLibrary([{name:'Skullcap',tags:'hat'}],'skull').length,0);
+});
+
+test('archive records contain literal ASCII text, source links, and retained signatures', async () => {
+  const library = JSON.parse(await readFile(new URL('../dist/assets/library.json',import.meta.url)));
+  assert.equal(new Set(library.map(item=>item.id)).size, library.length);
+  for (const item of library) {
+    assert.match(item.text, /\n/);
+    assert.doesNotMatch(item.text, /[^\x20-\x7e\n]/);
+    assert.match(item.sourceURL, /^https:\/\/github\.com\/amwhoi\/ascii-bin\/blob\/main\/asciiart_db\.txt#L\d+$/);
+  }
+  assert.match(library.find(item=>item.id==='ascii-bin-251').text,/Berton Corson/);
+});
+
+test('cycling visits every match and wraps in either direction without changing artwork', async () => {
+  const library = JSON.parse(await readFile(new URL('../dist/assets/library.json',import.meta.url)));
+  const matches = searchLibrary(library,'skull');
+  const original = JSON.stringify(matches);
+  let index=0; const visited=new Set();
+  for(let i=0;i<matches.length;i++){visited.add(matches[index].id);index=cycleIndex(index,1,matches.length);}
+  assert.equal(visited.size,matches.length);
+  assert.equal(index,0);
+  assert.equal(cycleIndex(index,-1,matches.length),matches.length-1);
+  assert.equal(cycleIndex(0,1,1),0);
+  assert.equal(cycleIndex(0,-1,0),0);
+  assert.equal(JSON.stringify(matches),original);
+  assert.deepEqual(artDimensions('  /\\\n /  \\'),{width:5,height:2});
 });
 
 test('export escapes characters that would corrupt SVG text',()=>{
