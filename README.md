@@ -10,6 +10,8 @@ The app bundles 3,493 distinct existing text artworks from six collections: Joan
 
 Search a subject, cycle every match with Previous/Next, or open “View all matches.” The gallery has source and subject filters, source labels and pagination. Left/right arrow keys cycle while the canvas is focused. Artist signatures stay in the art. Each piece shows its author and reuse terms; copy and TXT/PNG/SVG exports include credits and license links.
 
+Adjustment controls remain visible beside the canvas. Select “Remix artwork” to convert an archive drawing into an adjustable copy with detail/density, contrast, character-set and inversion controls. “Restore original artwork” returns the exact archived text; selecting another result also returns to its original. Remix exports retain source attribution.
+
 New art is generated from image uploads or `Text: HELLO` banners. Uploads are processed locally, with detail, contrast, character set and inversion controls. Free-form AI generation is not connected.
 
 ## Sources and reproducibility

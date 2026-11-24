@@ -50,14 +50,16 @@
             <p class="upload-note" id="upload-note">Your image stays in your browser.<br>No upload to a server. Just characters.</p>
           </div>
 
-          <div id="archive-note" class="archive-note"><span class="eyebrow">ORIGINAL CHARACTERS</span><p>Found in the archives. Drawn in text.</p><p>Cycle through every match, borrow a favorite, or use it as a starting point. Spacing and artist signatures stay with the piece.</p><div class="art-provenance"><span id="art-author"></span><a id="art-license" href="./credits.html" target="_blank" rel="noopener noreferrer"></a></div><div class="archive-tip">[ ← / → ] Browse when the canvas is focused.<br>[ + / − ] Zoom in for a closer look.</div></div>
-          <div class="settings" id="conversion-settings" hidden>
+
+          <div class="settings" id="conversion-settings">
             <div class="settings-heading"><span class="eyebrow">MAKE IT YOURS</span><button id="reset-button" class="subtle-button">Reset</button></div>
-            <div class="setting"><div class="label-row"><label for="width">Detail</label><output id="width-value" for="width">100 columns</output></div><input id="width" type="range" min="30" max="180" step="2" value="100"><div class="range-labels"><span>Less is more</span><span>All the detail</span></div></div>
+            <p id="settings-note" class="settings-note">Adjust density, contrast, and characters to make it yours.</p><button type="button" id="remix-button" class="outline-button" hidden>Remix artwork</button>
+            <div class="setting"><div class="label-row"><label for="width">Detail / density</label><output id="width-value" for="width">100 columns</output></div><input id="width" type="range" min="30" max="180" step="2" value="100"><div class="range-labels"><span>Less is more</span><span>All the detail</span></div></div>
             <div class="setting"><label for="character-set" class="field-label">Character set</label><div class="select-wrap"><select id="character-set"><option value="classic">Classic · . : + * # @</option><option value="detailed">Detailed · $ @ B % 8 &amp;</option><option value="minimal">Minimal · . : #</option><option value="binary">Binary · 0 1</option></select><span aria-hidden="true">⌄</span></div></div>
             <div class="setting"><div class="label-row"><label for="contrast">Contrast</label><output id="contrast-value" for="contrast">1.2×</output></div><input id="contrast" type="range" min="0.5" max="2.5" step="0.1" value="1.2"></div>
             <label class="toggle-row" for="invert"><span>Invert characters</span><input type="checkbox" id="invert"><span class="switch" aria-hidden="true"></span></label>
           </div>
+          <div id="archive-note" class="archive-note"><span class="eyebrow">ORIGINAL CHARACTERS</span><p>Found in the archives. Drawn in text.</p><p>Cycle through every match, borrow a favorite, or use it as a starting point. Spacing and artist signatures stay with the piece.</p><div class="art-provenance"><span id="art-author"></span><a id="art-license" href="./credits.html" target="_blank" rel="noopener noreferrer"></a></div><div class="archive-tip">[ ← / → ] Browse when the canvas is focused.<br>[ + / − ] Zoom in for a closer look.</div></div>
           <p id="status-message" class="status-message" role="status" aria-live="polite"></p>
         </aside>
 

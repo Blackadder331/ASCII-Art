@@ -13,6 +13,7 @@ let toastTimer;
 state.archives = [];
 state.archiveFilter = 'all';
 state.matchArchive = 'all';
+state.remixing = false;
 
 function notify(message) {
   clearTimeout(toastTimer);
@@ -83,17 +84,25 @@ function render() {
   $('#contrast-value').value = `${Number($('#contrast').value).toFixed(1)}×`;
   if (!state.source && !state.nativeArt) return;
   try {
-    const result = state.nativeArt
+    const result = state.nativeArt && !state.remixing
       ? { text: state.nativeArt.text, ...artDimensions(state.nativeArt.text) }
       : makeAscii(state.source, Number($('#width').value), { ramp: RAMPS[$('#character-set').value], contrast: Number($('#contrast').value), invert: $('#invert').checked });
     state.text = result.text;
     state.dimensions = { width: result.width, height: result.height };
     $('#ascii-output').textContent = result.text;
     $('#ascii-output').setAttribute('aria-label', `ASCII art of ${state.name}, ${result.width} columns by ${result.height} rows`);
-    $('#art-title').textContent = state.name.toUpperCase();
+    $('#art-title').textContent = `${state.name}${state.remixing ? ' · REMIX' : ''}`.toUpperCase();
     $('#art-dimensions').textContent = `${result.width} × ${result.height}`;
     $('#character-count').textContent = `${result.text.replace(/\n/g, '').length.toLocaleString()} CHARACTERS`;
-    $('#conversion-settings').hidden = Boolean(state.nativeArt);
+    const original = Boolean(state.nativeArt) && !state.remixing;
+    $('#conversion-settings').hidden = false;
+    ['width','contrast','character-set','invert','reset-button'].forEach(id => { $(`#${id}`).disabled = original; });
+    $('#remix-button').hidden = !state.nativeArt;
+    $('#remix-button').textContent = state.remixing ? 'Restore original artwork' : 'Remix artwork';
+    $('#settings-note').textContent = original
+      ? 'Viewing the original. Choose Remix artwork to adjust density, contrast, and characters.'
+      : state.remixing ? 'Adjusting a converted copy. Restore the original anytime; source credits stay attached.'
+      : 'Adjust density, contrast, and characters to make it yours.';
     $('#archive-note').hidden = !state.nativeArt;
     fitArt();
   } catch (error) {
@@ -104,6 +113,7 @@ function render() {
 function setSource(source, name, credit, sourceURL = '') {
   state.source = source;
   state.nativeArt = null;
+  state.remixing = false;
   state.matches = [];
   state.name = name;
   state.credit = credit;
@@ -143,6 +153,7 @@ function selectArt(item, { matches = state.library, query = '', category = 'all'
   state.matchArchive = archive;
   state.source = null;
   state.nativeArt = item;
+  state.remixing = false;
   state.name = item.name;
   state.credit = artworkCredit(item);
   state.sourceURL = item.sourceURL;
@@ -163,6 +174,29 @@ function cycleArt(step) {
   if (!state.matches.length) return;
   const item = state.matches[cycleIndex(state.matchIndex, step, state.matches.length)];
   selectArt(item, { matches: state.matches, query: state.query, category: state.matchCategory, archive: state.matchArchive });
+}
+
+function toggleRemix() {
+  if (!state.nativeArt) return;
+  state.remixing = !state.remixing;
+  if (state.remixing) {
+    const lines = state.nativeArt.text.split('\n');
+    const size = artDimensions(state.nativeArt.text);
+    const canvas = document.createElement('canvas');
+    const scale = Math.min(1, 2400 / Math.max(size.width * 9.6 + 20, size.height * 16.64 + 20));
+    canvas.width = Math.ceil((size.width * 9.6 + 20) * scale);
+    canvas.height = Math.ceil((size.height * 16.64 + 20) * scale);
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.scale(scale, scale);
+    ctx.fillStyle = '#000';ctx.font = '16px "Courier New", monospace';ctx.textBaseline = 'top';
+    lines.forEach((line, i) => ctx.fillText(line, 10, 10 + i * 16.64));
+    state.source = canvas;
+  } else state.source = null;
+  state.credit = `${state.remixing ? 'Remixed from original ASCII artwork.\n' : ''}${artworkCredit(state.nativeArt)}`;
+  state.zoom = 1;
+  render();
+  setStatus(state.remixing ? 'Remix ready. Adjust the controls below.' : 'Original artwork restored, character for character.');
 }
 
 async function generate() {
@@ -397,6 +431,7 @@ window.addEventListener('dragover',event => event.preventDefault());
 window.addEventListener('drop',event => event.preventDefault());
 ['width','contrast','character-set','invert'].forEach(id => $(`#${id}`).addEventListener('input',render));
 $('#reset-button').addEventListener('click',resetSettings);
+$('#remix-button').addEventListener('click',toggleRemix);
 $('#copy-button').addEventListener('click',copyArt);
 $('#download-button').addEventListener('click',() => {const open=$('#download-menu').hidden;$('#download-menu').hidden=!open;$('#download-button').setAttribute('aria-expanded',String(open));if(open) $('#download-menu button').focus();});
 $$('[data-download]').forEach(button => button.addEventListener('click',() => exportArt(button.dataset.download)));
