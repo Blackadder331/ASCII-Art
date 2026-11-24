@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#bee8a9">
+  <meta name="description" content="A playground for plain text. Turn ideas and images into ASCII art, fine-tune every character, and take your creation anywhere.">
+  <title>ASCII Studio — A playground for plain text</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23bee8a9'/%3E%3Ctext x='9' y='47' font-family='monospace' font-size='48' fill='%23131511'%3E%40%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="ASCII Studio home"><span class="brand-mark" aria-hidden="true">[<b>*</b>]</span><span>ASCII<br>STUDIO</span></a>
+      <nav aria-label="Main navigation"><a href="#studio" class="active">The studio</a><button data-open-library>Art library <span class="tiny-plus">+</span></button><button id="about-button">About</button></nav>
+      <span class="header-note">ALL CHARACTER.<br>NO PIXELS.</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div><p class="eyebrow">A PLAYGROUND FOR PLAIN TEXT</p><h1 id="page-title">Less pixels.<br>More character<span class="cursor">_</span></h1></div>
+        <div class="intro-right"><pre class="mini-spark" aria-hidden="true">   \ | /
+ --  *  --
+   / | \</pre><p>Big ideas, tiny symbols.<br>Turn anything into ASCII art.<br>Just like the internet used to make.</p></div>
+      </section>
+
+      <section class="workbench" id="studio" aria-label="ASCII art studio">
+        <aside class="controls">
+          <div class="panel-heading"><span class="eyebrow">MAKE SOMETHING</span><span aria-hidden="true">(*)</span></div>
+          <div class="source-tabs" role="tablist" aria-label="Art source">
+            <button role="tab" id="imagine-tab" aria-controls="imagine-panel" aria-selected="true"><span aria-hidden="true">✳</span> From an idea</button>
+            <button role="tab" id="upload-tab" aria-controls="upload-panel" aria-selected="false" tabindex="-1"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="14" height="14" rx="1"/><circle cx="7" cy="7" r="1"/><path d="m3 14 4-4 4 4 3-3 3 3"/></svg> From an image</button>
+          </div>
+
+          <div id="imagine-panel" role="tabpanel" aria-labelledby="imagine-tab">
+            <form id="prompt-form">
+              <label for="prompt" class="field-label">What’s on your mind?</label>
+              <div class="prompt-wrap"><textarea id="prompt" rows="3" maxlength="200" placeholder="A butterfly, a skull, a tiny universe…">A butterfly</textarea><span class="prompt-corner" aria-hidden="true">[ _ ]</span></div>
+              <div class="suggestions"><span>TRY</span><button type="button" data-prompt="A skull">Skull</button><button type="button" data-prompt="Saturn">Saturn</button><button type="button" data-prompt="Text: HELLO">Text: HELLO</button></div>
+              <button type="submit" class="primary generate-button" id="generate-button"><span aria-hidden="true">✳</span><span id="generate-label">Generate ASCII</span><kbd>⌘ ↵</kbd></button>
+            </form>
+            <div class="generation-note">Made from a library of <span id="library-count">2,500+</span> illustrations.<br><button type="button" id="online-search-toggle" aria-pressed="false">Search online photos instead</button></div>
+          </div>
+
+          <div id="upload-panel" role="tabpanel" aria-labelledby="upload-tab" hidden>
+            <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/bmp" class="visually-hidden" tabindex="-1">
+            <button type="button" class="drop-zone" id="drop-zone"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 25v8h24v-8M20 28V6m-8 8 8-8 8 8"/></svg><strong>Drop an image here</strong><span>or click to browse your files</span><small>JPG, PNG, WEBP, GIF · UP TO 20 MB</small></button>
+            <p class="upload-note" id="upload-note">Your image stays in your browser.<br>No upload to a server. Just characters.</p>
+          </div>
+
+          <div class="settings">
+            <div class="settings-heading"><span class="eyebrow">MAKE IT YOURS</span><button id="reset-button" class="subtle-button">Reset</button></div>
+            <div class="setting"><div class="label-row"><label for="width">Detail</label><output id="width-value" for="width">100 columns</output></div><input id="width" type="range" min="30" max="180" step="2" value="100"><div class="range-labels"><span>Less is more</span><span>All the detail</span></div></div>
+            <div class="setting"><label for="character-set" class="field-label">Character set</label><div class="select-wrap"><select id="character-set"><option value="classic">Classic · . : + * # @</option><option value="detailed">Detailed · $ @ B % 8 &amp;</option><option value="minimal">Minimal · . : #</option><option value="binary">Binary · 0 1</option></select><span aria-hidden="true">⌄</span></div></div>
+            <div class="setting"><div class="label-row"><label for="contrast">Contrast</label><output id="contrast-value" for="contrast">1.2×</output></div><input id="contrast" type="range" min="0.5" max="2.5" step="0.1" value="1.2"></div>
+            <label class="toggle-row" for="invert"><span>Invert characters</span><input type="checkbox" id="invert"><span class="switch" aria-hidden="true"></span></label>
+          </div>
+          <p id="status-message" class="status-message" role="status" aria-live="polite"></p>
+        </aside>
+
+        <div class="preview-panel" id="preview-panel">
+          <div class="preview-toolbar"><div class="preview-label"><span class="status-dot" aria-hidden="true"></span><span>THE CANVAS</span><span class="live-label">LIVE PREVIEW</span></div><div class="canvas-tools"><button id="shuffle-button" title="Surprise me" aria-label="Surprise me"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M6 6h.01M14 6h.01M10 10h.01M6 14h.01M14 14h.01" stroke-width="2.4"/></svg></button><button id="expand-button" title="Expand canvas" aria-label="Expand canvas" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3H3v4m10-4h4v4M3 13v4h4m10-4v4h-4"/></svg></button></div></div>
+          <div class="canvas-viewport" id="canvas-viewport">
+            <span class="canvas-corner corner-tl" aria-hidden="true">+</span><span class="canvas-corner corner-tr" aria-hidden="true">+</span><span class="canvas-corner corner-bl" aria-hidden="true">+</span><span class="canvas-corner corner-br" aria-hidden="true">+</span>
+            <div class="art-positioner" id="art-positioner"><pre id="ascii-output" role="img" aria-label="ASCII art of a butterfly" tabindex="0"></pre></div>
+            <div class="canvas-caption"><span id="art-title">BUTTERFLY</span><span id="art-dimensions">100 × 50</span></div>
+            <div class="loading-overlay" id="loading-overlay" hidden><span class="loading-glyph">[*]</span><span id="loading-label">Finding your next masterpiece…</span></div>
+          </div>
+          <div class="preview-bottom"><span id="character-count">0 CHARACTERS</span><div class="zoom-controls"><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-fit" title="Fit artwork to canvas">Fit</button><button id="zoom-in" aria-label="Zoom in">+</button></div></div>
+          <div class="export-bar"><div class="source-credit" id="source-credit">AN EXERCISE IN LESS.</div><div class="export-actions"><button id="copy-button" class="outline-button"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="6" y="6" width="10" height="11" rx="1"/><path d="M12 3H3v10"/></svg><span>Copy art</span></button><div class="download-wrap"><button id="download-button" class="primary" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v9m-4-4 4 4 4-4M3 13v4h14v-4"/></svg>Download <span class="chevron" aria-hidden="true">⌄</span></button><div class="download-menu" id="download-menu" role="menu" hidden><button role="menuitem" data-download="txt">Plain text <span>.TXT</span></button><button role="menuitem" data-download="png">Image <span>.PNG</span></button><button role="menuitem" data-download="svg">Scalable image <span>.SVG</span></button></div></div></div></div>
+        </div>
+      </section>
+
+      <section class="starter-section" aria-labelledby="starter-heading"><div class="section-topline"><div><span class="eyebrow">A LITTLE INSPIRATION</span><h2 id="starter-heading">A few characters to get you started.</h2></div><button class="text-link" data-open-library>Explore the library <span aria-hidden="true">[+]</span></button></div><div class="starter-grid" id="starter-grid"></div></section>
+
+      <footer class="site-footer"><span>ASCII STUDIO <span class="footer-star" aria-hidden="true">✳</span> MADE OF THE SIMPLE THINGS.</span><a href="https://lockbooks.net/products/ascii-art-from-gamefaqs" target="_blank" rel="noopener noreferrer">A love letter to the early internet.</a><span>LET’S KEEP IT PLAIN.</span></footer>
+    </main>
+  </div>
+
+  <dialog id="library-dialog" aria-labelledby="library-title"><div class="dialog-heading"><div><span class="eyebrow">FIND YOUR NEXT CHARACTER</span><h2 id="library-title">The art library.</h2></div><button class="close-button" data-close-dialog aria-label="Close library">×</button></div><p class="dialog-description">Pick an illustration. Make it your own, one character at a time.</p><label class="library-search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="8" r="5"/><path d="m12 12 5 5"/></svg><input id="library-search" type="search" placeholder="Search cats, flowers, space, anything…" aria-label="Search art library"></label><div class="category-tabs" id="category-tabs"><button class="selected" data-category="all">All</button><button data-category="animals-nature">Nature</button><button data-category="travel-places">Places</button><button data-category="objects">Objects</button><button data-category="smileys-emotion">Characters</button></div><p id="library-results-count" class="library-results-count" role="status"></p><div id="library-grid" class="library-grid"></div><button id="load-more" class="outline-button load-more">Show more</button><p class="library-credit">Illustrations by <a href="https://openmoji.org/" target="_blank" rel="noopener noreferrer">OpenMoji</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a> · Reinterpreted as ASCII.</p></dialog>
+
+  <dialog id="about-dialog" aria-labelledby="about-title"><div class="dialog-heading"><div><span class="eyebrow">HELLO, WORLD.</span><h2 id="about-title">All you need is a character.</h2></div><button class="close-button" data-close-dialog aria-label="Close about">×</button></div><p>A little tribute to text files, late-night forums, and the beautifully inventive world of early internet art. Inspired by <a href="https://lockbooks.net/products/ascii-art-from-gamefaqs" target="_blank" rel="noopener noreferrer">ASCII Art from GameFAQs by Lock Books</a>.</p><div class="how-item"><b>[01] START WITH SOMETHING</b><p>Describe a subject to find it in the OpenMoji illustration library. For people, landmarks, or other subjects, switch to online photo search. You can also combine library subjects with “and.”</p></div><div class="how-item"><b>[02] FIND ITS CHARACTER</b><p>Each image becomes a grid of text. Adjust the detail, character set, and contrast to find the right texture. Upload your own image for a specific scene or composition.</p></div><div class="how-item"><b>[03] TAKE IT WITH YOU</b><p>Copy it into a text file, or download a TXT, PNG, or SVG. Use a monospace font to keep everything lined up.</p></div><p class="about-fineprint">This is a library and image converter, not an AI image model. Online search sends your search terms to Wikipedia. Uploaded images are processed only on your device. OpenMoji-derived art is licensed CC BY-SA 4.0; exported files include attribution. Online photos retain their original licenses.</p></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
